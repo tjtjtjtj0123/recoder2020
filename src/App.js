@@ -1,26 +1,61 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { GoogleApiWrapper, InfoWindow, Marker, Circle} from "google-maps-react";
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import CurrentLocation from "./Map";
+
+export class MapContainer extends Component {
+  
+  state = {
+    showingInfoWindow: false,
+    activeMarker: {},
+    selectedPlace: {},
+  };
+
+  onMarkerClick = (props, marker, e) => 
+    this.setState({
+      selectedPlace: props,
+      activeMarker: marker,
+      showingInfoWindow: true,
+    });
+
+  onClose = (props) => {
+    if (this.state.showingInfoWindow) {
+      this.setState({
+        showingInfoWindow: false,
+        activeMarker: null,
+      });
+    }
+  };
+
+  render() {
+    return (
+      <div>
+        <GooglePlacesAutocomplete
+          apiKey="AIzaSyAYqmb4DLzdfbiki3H4D7lGi6iuqIDV4P4"
+        />
+        <CurrentLocation centerAroundCurrentLocation google={this.props.google}>
+          <Marker onClick={this.onMarkerClick} name={"current location"} />
+          <Circle 
+            center={{lat: 37.66348794177282 , lng: 127.07408851368382}}
+            // center={{CurrentLocation}}
+            radius={1200}
+            fillColor='#FF0000'/>
+          <InfoWindow
+            marker={this.state.activeMarker}
+            visible={this.state.showingInfoWindow}
+            onClose={this.onClose}>
+            <div>
+              <h4>{this.state.selectedPlace.name}</h4>
+            </div>
+          </InfoWindow>
+        </CurrentLocation>
+      </div>
+    );
+  }
 }
 
-export default App;
+export default GoogleApiWrapper({
+  apiKey: "AIzaSyAYqmb4DLzdfbiki3H4D7lGi6iuqIDV4P4",
+})(MapContainer);
+
