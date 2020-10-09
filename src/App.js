@@ -3,7 +3,7 @@ import { GoogleApiWrapper, InfoWindow, Marker, Circle} from "google-maps-react";
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 
 import CurrentLocation from "./Map";
-
+// showing my current location info
 export class MapContainer extends Component {
   
   state = {
